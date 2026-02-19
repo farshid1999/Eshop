@@ -1,0 +1,39 @@
+{% load static %}
+{% load thumbnail %}
+{% load price_view %}
+{% load custom_filter %}
+<div class="col-sm-4" style="height: 500px;margin-bottom: 30px">
+							<div class="product-image-wrapper">
+								<div class="single-products">
+									<div class="productinfo text-center">
+                                        {% thumbnail p.image "268x250" crop="center" as im %}
+                                            <img src="{{ im.url }}" alt="">
+                                        {% endthumbnail %}
+
+										<h2>{{ p.price|price_view }} تومان </h2>
+										<p class="product-title">{{ p.title }}</p>
+										<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+									</div>
+									<div class="product-overlay">
+										<div class="overlay-content">
+											<h2>{{ p.price|price_view }} تومان </h2>
+											<p>{{ p.title }}</p>
+											<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+										</div>
+									</div>
+								</div>
+								<div class="choose">
+									<ul class="nav nav-pills nav-justified">
+										<li>
+                                            <a href="{% url 'detail_list' slug=p.slug %}"><i class="fa fa-plus-square"></i>جزئیات</a>
+                                        </li>
+										<li>
+                                            <a onclick="add_to_favorite({{ p.id }},event)" href="#">
+													<i {% if favorite_map|dict_get:p.id %}style="color: orange"{% endif %} id="i-{{ p.id }}" class="fa {% if favorite_map|dict_get:product.id %}fa-check-circle{% else %}fa-plus-square{% endif %}"></i>لیست علاقه مندی ها
+                                            </a>
+                                        </li>
+									</ul>
+								</div>
+							</div>
+						</div>
+

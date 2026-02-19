@@ -1,0 +1,228 @@
+{% extends 'shared/base.html' %}
+{% load render_partial %}
+{% load thumbnail %}
+{% load price_view %}
+{% block title %}
+    پنل کاربری
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row vis-info">
+            {% render_partial 'user_module.views.user_panel_component' %}
+            <div class="col-md-9">
+                <div class="panel panel-warning">
+                    <div id="profile_settings" style="display: block">
+
+                        <form enctype="multipart/form-data" method="post" action="" style="padding: 30px">
+                            {% csrf_token %}
+                            {% thumbnail request.user.avatar "121x121" crop="center" quality=100 as img %}
+                                <img onclick="edit_avatar()" id="avatar-user"
+                                     style="border-radius: 100%;cursor: pointer" class="thumbnail" src="{{ img.url }}"
+                                     alt="">
+                            {% endthumbnail %}
+                            {{ profile_settings_form }}
+                            <input class="btn btn-warning" name="submit_profile" type="submit" value="ثبت">
+                        </form>
+                        <hr>
+                        <h3>آدرس</h3>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {{ address_form }}
+                            <input type="submit" name="submit_address" class="btn btn-warning" value="ذخیره آدرس">
+                        </form>
+                    </div>
+                    <div id="reset_password" style="display: none">
+                        <form method="post" action="" style="padding: 30px">
+                            {% csrf_token %}
+                            {{ reset_password_form }}
+                            <input class="btn btn-warning" name="submit_password" type="submit" value="ثبت">
+                        </form>
+                    </div>
+                    <div id="orders-detail-container" style="display: none">
+                        <table class="table-responsive table-order">
+                            <thead class="thead-order">
+                            <tr class="tr-thead">
+                                <th>شماره</th>
+                                <th>عکس محصول</th>
+                                <th>محصول</th>
+                                <th>تعداد</th>
+                                <th>قیمت</th>
+                                <th>شناسه محصول</th>
+                                <th>تاریخ پرداخت</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for od in order_detail %}
+                                <tr class="tr-tbody">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        {% thumbnail od.product.image "50x50" crop="center" quality=100 as img %}
+                                            <img src="{{ img.url }}" alt="">
+                                        {% endthumbnail %}
+                                    </td>
+                                    <td>{{ od.product.title }}</td>
+                                    <td>{{ od.count }}</td>
+                                    <td>{{ od.final_price|price_view }}</td>
+                                    <td>{{ od.product.id }}</td>
+                                    <td>{{ od.order.payment_date }}</td>
+                                </tr>
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="favorite-items" style="display: none">
+                        <table class="table-responsive table-order">
+                            <thead class="thead-order">
+                            <tr class="tr-thead">
+                                <th>شماره</th>
+                                <th>عکس محصول</th>
+                                <th>محصول</th>
+                                <th>برند</th>
+                                <th>دسته بندی</th>
+                                <th>قیمت</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for fp in favorite_product %}
+                                <tr class="tr-tbody">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        {% thumbnail fp.image "50x50" crop="center" quality=100 as img %}
+                                            <img src="{{ img.url }}" alt="">
+                                        {% endthumbnail %}
+                                    </td>
+                                    <td>{{ fp.title }}</td>
+                                    <td>{{ fp.brand }}</td>
+                                    <td>{{ fp.price|price_view }}</td>
+                                    <td><a class="btn btn-warning" href="{% url 'detail_list' fp.slug %}">نمایش
+                                        جزئیات</a></td>
+                                </tr>
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .list-user-road li {
+            text-align: center;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin-bottom: 5px;
+            background-color: orange;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.5s ease;
+
+        }
+
+        .list-user-road li:hover {
+            background-color: darkorange;
+        }
+
+        .list-user-road a {
+            color: white;
+        }
+
+        .tr-thead th {
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .tr-tbody:not(:last-child) {
+            border-bottom: 0.5px solid darkorange;
+        }
+
+        .tr-tbody td {
+            padding: 20px;
+            text-align: center;
+            text-overflow: ellipsis;
+
+        }
+
+        .tr-thead {
+            background-color: orange;
+        }
+
+        .vis-info {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .table-order {
+            box-shadow: 0px 5px 20px black;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 1000px) {
+            .vis-info {
+                flex-direction: column; /* تغییر جهت به ستون */
+            }
+        }
+    </style>
+    <script>
+
+
+        document.getElementById("ps").addEventListener("click", function (event) {
+            event.preventDefault()
+            document.getElementById("profile_settings").style.display = 'block'
+            document.getElementById("reset_password").style.display = 'none'
+            document.getElementById("orders-detail-container").style.display = 'none'
+            document.getElementById("favorite-items").style.display = 'none'
+        })
+        document.getElementById("rp").addEventListener("click", function (event) {
+            event.preventDefault()
+            document.getElementById("reset_password").style.display = 'block'
+            document.getElementById("profile_settings").style.display = 'none'
+            document.getElementById("orders-detail-container").style.display = 'none'
+            document.getElementById("favorite-items").style.display = 'none'
+
+        })
+        document.getElementById("od").addEventListener("click", function (event) {
+            event.preventDefault()
+            document.getElementById("orders-detail-container").style.display = 'block'
+            document.getElementById("reset_password").style.display = 'none'
+            document.getElementById("profile_settings").style.display = 'none'
+            document.getElementById("favorite-items").style.display = 'none'
+        })
+        document.getElementById("fp").addEventListener("click", function (event) {
+            event.preventDefault()
+            document.getElementById("favorite-items").style.display = 'block'
+            document.getElementById("orders-detail-container").style.display = 'none'
+            document.getElementById("reset_password").style.display = 'none'
+            document.getElementById("profile_settings").style.display = 'none'
+
+        })
+
+        function edit_avatar() {
+            document.getElementById("edit-avatar").click()
+        }
+
+        $(document).ready(function () {
+            $('#id_province').select2();
+            $('#id_city').select2();
+
+            $("#id_province").change(function () {
+                const province = $(this).val();
+                $.get("/user/get-cities/?province=" + province, function (data) {
+                    let citySelect = $("#id_city");
+                    citySelect.empty();
+                    data.cities.forEach(function (c) {
+                        citySelect.append(new Option(c, c));
+                    });
+                    citySelect.trigger('change');
+                });
+            });
+        });
+    </script>
+    </script>
+{% endblock %}

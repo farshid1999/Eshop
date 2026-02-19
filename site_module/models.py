@@ -1,0 +1,86 @@
+from django.db import models
+
+# Create your models here.
+
+
+class SiteSetting(models.Model):
+
+    site_name = models.CharField(max_length=200,verbose_name='نام سایت')
+    site_url=models.URLField(max_length=200,verbose_name='دامنه')
+    address = models.CharField(max_length=200,verbose_name='آدرس')
+    phone = models.CharField(max_length=200,null=True,blank=True,verbose_name='تلفن')
+    fax = models.CharField(max_length=200,null=True,blank=True,verbose_name='فکس')
+    email = models.CharField(max_length=200,null=True,blank=True,verbose_name='ایمیل')
+    copy_right = models.TextField(verbose_name='متن کپی رایت')
+    site_logo=models.ImageField(upload_to='images/site_setting',verbose_name=' لوگو سایت')
+    about_us_text=models.TextField(verbose_name='متن درباره ما سایت')
+    is_main_setting = models.BooleanField(verbose_name='تنظیمات اصلی')
+
+    class Meta:
+        verbose_name='تنظیمات سایت'
+        verbose_name_plural='تنظیمات'
+
+    def __str__(self):
+        return self.site_name
+
+
+class FooterLinkBox(models.Model):
+    title=models.CharField(max_length=200,verbose_name='عنوان')
+
+    class Meta:
+        verbose_name='دسته بندی لینک های فوتر'
+        verbose_name_plural='دسته بندی های لینک های فوتر'
+
+    def __str__(self):
+        return self.title
+
+class FooterLink(models.Model):
+    title=models.CharField(max_length=200,verbose_name='عنوان')
+    url=models.URLField(max_length=500,verbose_name='لینک')
+    footer_link_box=models.ForeignKey(to=FooterLinkBox,on_delete=models.CASCADE,verbose_name='دسته بندی')
+
+    class Meta:
+        verbose_name='لینک  فوتر'
+        verbose_name_plural='لینک های فوتر'
+
+    def __str__(self):
+        return self.title
+
+class Slider(models.Model):
+    title=models.CharField(max_length=200,verbose_name='عنوان')
+    url=models.URLField(max_length=400,verbose_name='لینک')
+    url_title=models.CharField(max_length=200,verbose_name='عنوان لینک')
+    image=models.ImageField(upload_to='images/slider')
+    content=models.CharField(verbose_name='متن')
+    is_active=models.BooleanField(verbose_name='فعال/غیر فعال')
+
+    class Meta:
+        verbose_name='اسلایدر'
+        verbose_name_plural='اسلایدر ها'
+
+    def __str__(self):
+        return self.title
+
+
+class SiteBanner(models.Model):
+    class SiteBannerPosition(models.TextChoices):
+        product_list='list_page','صفحه لیست محصولات'
+        detail_list='detail_list','صفحه جزئیات محصولات'
+        contact_us='contact_us','صفحه تماس با ما'
+        article_page='article_page','صفحه مقالات'
+
+
+    title=models.CharField(max_length=400,verbose_name="عنوان بنر")
+    image=models.ImageField(upload_to="images/banners",verbose_name="عکس بنر")
+    url=models.URLField(blank=True,null=True,verbose_name="ادرس url")
+    is_active=models.BooleanField(verbose_name="فعال/غیر فعال")
+    posation=models.CharField(max_length=400,verbose_name="جایگاه نمایش",choices=SiteBannerPosition.choices)
+
+    def __str__(self):return self.title
+
+    class Meta:
+        verbose_name="بنر تبلیغاتی"
+        verbose_name_plural="بنر های تبلیغاتی"
+
+
+

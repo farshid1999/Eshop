@@ -1,0 +1,19 @@
+<div class="panel-group category-products" id="accordian">
+{% for category in product_categories %}
+    {% if forloop.first %}
+        	<div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title"><a href="{% url "list_page" %}">همه</a></h4>
+        </div>
+    </div>
+    {% endif %}
+	<div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title"><a href="{% url "filter_category_product" category_product=category.url_title %}">{{ category.title }}</a></h4>
+        </div>
+    </div>
+
+
+{% endfor %}
+
+</div>

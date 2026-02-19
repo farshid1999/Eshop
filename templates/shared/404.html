@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه پیدا نشد</title>
+    <style>
+        body {
+            font-family: "Vazir", Arial, sans-serif;
+            background-color: #fff3e0;
+            color: #e65100;
+            text-align: center;
+            padding: 50px;
+            direction: rtl;
+        }
+        h1 {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        a {
+            font-size: 18px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #ff8f00;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #e65100;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .inner-container{
+            padding: 150px;
+            border: 10px dashed orange;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            outline: 8px solid orange;
+            outline-offset: 10px;
+        }
+        .inner-container p{
+            text-align: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="inner-container"id="scroll-target">
+            <h1>404</h1>
+            <p>متاسفیم! صفحه‌ای که به دنبال آن هستید پیدا نشد.</p>
+            <a href="{% url 'home-page' %}">بازگشت به صفحه اصلی</a>
+        </div>
+
+    </div>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('html, body').animate({
+            scrollTop: $("#scroll-target").offset().top - ($(window).height() / 2) + ($("#scroll-target").outerHeight() / 2)
+        }, 1000); // 1000 میلی‌ثانیه زمان اسکرول
+    });
+
+        {# window.onload = function() {#}
+        {#    const target = document.getElementById('scroll-target');#}
+        {#    target.scrollIntoView({ behavior: 'smooth', block: 'center' });#}
+        {#};#}
+</script>

@@ -1,0 +1,26 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}
+فراموشی رمز عبور
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+		<section id="form"><!--form-->
+			<div class="row">
+				<div class="col-sm-6 col-md-offset-3">
+					<div class="signup-form"><!--login form-->
+						<h2>ایمیل خود را وارد کنید</h2>
+						<form method="post" action="{% url 'forgot_pass_page' %}">
+                            {% csrf_token %}
+                            {{ forgot_pass.email }}
+                            {{ forgot_pass.email.errors }}
+							<button type="submit" class="btn btn-default">ارسال کد فعال سازی</button>
+						</form>
+					</div><!--/login up form-->
+				</div>
+			</div>
+		</section>
+	</div>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends 'shared/base.html' %}
+{% load thumbnail %}
+{% load price_view %}
+{% load filter_cart %}
+{% block title %}
+    صفحه سفارش ها
+{% endblock %}
+{% block content %}
+    <section id="cart_items">
+        <div class="container">
+            <div class="breadcrumbs">
+                <ol class="breadcrumb">
+                    <li><a href="#">خانـه</a></li>
+                    <li class="active">پرداخت</li>
+                </ol>
+            </div><!--/breadcrums-->
+            <div class="table-responsive cart_info">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr class="cart_menu">
+                        <td class="image">کـالا</td>
+                        <td class="description"></td>
+                        <td class="price">قیمت</td>
+                        <td class="quantity">تعـداد</td>
+                        <td class="total">مجمـوع</td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for order in orders %}
+                        <tr id="order-{{ order.product.id }}">
+                            <td class="cart_product">
+                                <a href="#">
+                                    {% thumbnail order.product.image '50x50' crop="center" as im %}
+                                        <img src="{{ im.url }}" alt="">
+                                    {% endthumbnail %}
+                                </a>
+                            </td>
+                            <td class="cart_description">
+                                <h4 style="margin-right: 20px; width: 400px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <a href="">{{ order.product.title }}</a></h4>
+                                <p style="margin-right: 20px">شناسـه : {{ order.product.id }}</p>
+                            </td>
+                            <td class="cart_price">
+                                <p id="price-{{ order.product.id }}"
+                                   data-value="{{ order.product.price }}">{{ order.product.price|price_view }} تومان</p>
+                            </td>
+                            <td class="cart_quantity">
+                                <div class="cart_quantity_button" style="display: flex">
+                                    <button onclick="inc_prod({{ order.product.id }},event)" class="cart_quantity_up">
+                                        +
+                                    </button>
+                                    <input style="margin-right: 2px;margin-left: 2px" min="1"
+                                           id="count-{{ order.product.id }}" class="cart_quantity_input" type="text"
+                                           name="quantity" value="{{ order.count }}" autocomplete="off" size="2">
+                                    <button onclick="dec_prod({{ order.product.id }},event)" class="cart_quantity_down">
+                                        -
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="cart_total">
+                                <p id="cart-price"
+                                   class="cart_total_price">{{ order.count|multiply:order.product.price|price_view }}
+                                    تومان</p>
+                            </td>
+                            <td id="delete-order" class="cart_delete">
+                                <a onclick="remove_product({{ order.product.id }},event)" class="cart_quantity_delete"
+                                   href=""><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section id="do_action">
+        <div class="container">
+            <div class="heading">
+                <h3>نهایی کردن سفارش یا ادامه خریـد ؟! </h3>
+                <p>در صورتیکـه کوپن خریـد و یا کد تخفیف داریـد میتوانید از آن استفاده نمایید | با استفاده از بخش مربوطه
+                    هزینه حمل و نقل خود را محاسبـه نمایید</p>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="chose_area">
+                        <ul class="user_option">
+                            <li>
+                                <h3>استفاده از کوپـن خریـد / کارت تخفیـف :</h3>
+                            </li>
+                            <li class="single_field zip-field">
+                                <input id="discount_code" type="text" placeholder="کد تخفیف خود را وارد نمایید ...">
+                            </li>
+                            <li style="margin-top: 15px">
+                                <a onclick="set_discount_order({{ request.user.id }},event)"
+                                   class="btn btn-default update" href="">بررسی و اعمال</a>
+                            </li>
+                        </ul>
+                        <ul class="user_info">
+                            <h3>محاسبـه هزینـه حمل و نقل</h3>
+                            <li class="single_field">
+                                <label>استان :</label>
+                                <select id="province" style="width: 100%;">
+                                    <option value="">انتخاب کنید...</option>
+                                    {% for province in provinces %}
+                                        <option value="{{ province }}">{{ province }}</option>
+                                    {% endfor %}
+                                </select>
+                            </li>
+                            <li class="single_field">
+                                <label>شهر / منطقه</label>
+                                <select id="city" style="width: 100%;">
+                                    <option value="">ابتدا استان را انتخاب کنید</option>
+                                </select>
+                            </li>
+                            <li class="single_field zip-field">
+                                <label>کد پستی :</label>
+                                <input type="text">
+                            </li>
+                        </ul>
+                        <a class="btn btn-default update" onclick="calc_shipping(event)" href="">محاسبـه هزینـه حمل و
+                            نقـل</a>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="total_area">
+                        <ul>
+                            <li>مجمـوع سبـد خریـد <span id="sum-orders"
+                                                        data-value="{{ final_price }}">{{ final_price|price_view }} تومان</span>
+                            </li>
+                            <li>مالیـات (9%) <span>182.700 ريال</span></li>
+                            <li>هزینـه حمل و نقـل <span id="shipping_price">۰</span></li>
+                            <li>مجمـوع <span id="final_total">{{ final_price|price_view }} تومان</span></li>
+                        </ul>
+                        <a class="btn btn-default update" href="shop.html">به روز رسانی سبـد خریـد </a>
+                        <a class="btn btn-default check_out" href="checkout.html">پرداخت</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function calc_shipping(event) {
+            event.preventDefault();
+
+            const province = document.getElementById("province").value;
+
+            fetch(`/order/calculate-shipping/?province=${province}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "ok") {
+                        document.getElementById("shipping_price").innerHTML = data.price.toLocaleString() + " تومان";
+
+                        // جمع کل + حمل‌ونقل آپدیت شود
+                        const total = parseInt(document.getElementById("sum-orders").dataset.value);
+                        const final = total + data.price;
+
+                        document.getElementById("final_total").innerHTML = final.toLocaleString() + " تومان";
+                    }
+                });
+        }
+
+        $(document).ready(function () {
+
+            // فعال‌سازی سرچ در سلکت‌ها
+            $('#province').select2();
+            $('#city').select2();
+
+            // وقتی استان عوض شد
+            $('#province').change(function () {
+                const province = $(this).val();
+
+                if (!province) {
+                    $('#city').empty();
+                    $('#city').append('<option value="">استان را انتخاب کنید</option>');
+                    return;
+                }
+
+                $.get("/user/get-cities/?province=" + province, function (data) {
+
+                    $('#city').empty(); // پاک کردن شهرهای قبلی
+
+                    data.cities.forEach(function (city) {
+                        $('#city').append(new Option(city, city));
+                    });
+
+                    $('#city').trigger('change');
+                });
+            });
+
+        });
+    </script>
+
+
+{% endblock %}
+

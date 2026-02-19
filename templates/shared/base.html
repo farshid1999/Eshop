@@ -1,0 +1,20 @@
+{% load render_partial %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% include 'shared/head_refrence.html' %}
+    <title>
+    {% block title %}
+    صفحه اصلی | فروشگاه کارزیبا
+    {% endblock %}
+    </title>
+<body>
+    {% render_partial 'home_module.views.site_header_component'  %}
+    {% block content %}
+    {% endblock %}
+    {% render_partial 'home_module.views.site_footer_component' %}
+{% include 'shared/footer_refrences.html' %}
+
+
+</body>
+</html>

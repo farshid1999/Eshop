@@ -1,0 +1,10 @@
+ul{
+    padding: 0;
+}
+.count-buy{
+    display: block;
+}
+.count-buy>input{
+    color: white;
+    display: block;
+}

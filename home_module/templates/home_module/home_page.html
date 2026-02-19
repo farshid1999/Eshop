@@ -1,0 +1,271 @@
+{% extends 'shared/base.html' %}
+{% load price_view %}
+{% load thumbnail %}
+{% load price_view %}
+{% load custom_filter %}
+{% block content %}
+<section id="slider">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<div id="slider-carousel" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						<li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+						<li data-target="#slider-carousel" data-slide-to="1"></li>
+						<li data-target="#slider-carousel" data-slide-to="2"></li>
+					</ol>
+
+					<div class="carousel-inner">
+						{% for slide in slider %}
+							<div class="item {% if forloop.first %}active{% endif %}">
+								<div class="col-sm-6">
+									<h1><span>SHOP</span>CENTER</h1>
+									<h2>{{ slide.title }}</h2>
+									<p>{{ slide.content }}</p>
+									<a href="{{ slide.url }}" class="btn btn-default get">{{ slide.url_title }}</a>
+								</div>
+								<div class="col-sm-6">
+									<img src="{{ slide.image.url }}" class="girl img-responsive" width="450" alt="" style="margin-top:90px" />
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+
+					<a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
+						<i class="fa fa-angle-left"></i>
+					</a>
+					<a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
+						<i class="fa fa-angle-right"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+	<section>
+		<div class="container">
+			<div class="row">
+
+				<div class="recommended_items"><!--NewProduct_items-->
+						<h2 class="title text-center">جدید ترین محصولات</h2>
+
+						<div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+							<div class="carousel-inner">
+								{% for group in latest_product %}
+								<div class="item {% if forloop.first %}active{% endif %}">
+									{% for product in group %}
+									<div class="col-sm-3">
+										<div class="product-image-wrapper">
+											<div class="single-products">
+												<div class="productinfo text-center">
+                                                    <a href="{% url "detail_list" slug=product.slug %}"><img style="height: 150px;width: 200px" src="{{ product.image.url }}" alt=""/></a>
+                                                    <h2> تومان{{ product.price|price_view }}</h2>
+													<p class="product-title">{{ product.title }}</p>
+													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خرید</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									{% endfor %}
+
+								</div>
+								{% endfor %}
+
+							</div>
+							 <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+								<i class="fa fa-angle-left"></i>
+							  </a>
+							  <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+								<i class="fa fa-angle-right"></i>
+							  </a>
+						</div>
+					</div><!--/NewProduct_items-->
+
+				<div class="col-sm-12 padding-right">
+					<div class="features_items"><!--RetailSale_items-->
+						<a href="shop-2.html"><h2 class="title text-center">پر بازدید ترین محصولات</h2></a>
+						<div id="new-item-carousel" class="carousel slide" data-ride="carousel">
+						<div class="carousel-inner">
+                            {% for group in most_visit_product %}
+                                <div class="item {% if forloop.first %}active{% endif %}">
+                                {% for product in group %}
+                                <div class="col-sm-3">
+								<div class="product-image-wrapper">
+									<div class="single-products">
+											<div class="productinfo text-center">
+                                                <a href="{% url "detail_list" slug=product.slug %}"><img style="height: 150px;width: 200px" src="{{ product.image.url }}" alt="" /></a>
+												<h2>{{ product.price|price_view }}</h2>
+												<p class="product-title">{{ product.title }}</p>
+												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+											</div>
+											<div class="product-overlay">
+												<div class="overlay-content">
+													<h2>{{ product.price|price_view }}</h2>
+													<p class="product-title">{{ product.title }}</p>
+													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+												</div>
+											</div>
+									</div>
+									<div class="choose">
+										<ul class="nav nav-pills nav-justified">
+											<li>
+												<a onclick="add_to_favorite({{ product.id }},event)" href="#">
+													<i {% if favorite_map|dict_get:product.id %}style="color: orange"{% endif %} id="i-{{ product.id }}" class="fa {% if favorite_map|dict_get:product.id %}fa-check-circle{% else %}fa-plus-square{% endif %}"></i>لیست علاقه مندی ها
+												</a>
+											</li>
+											<li><a href="{% url 'detail_list' product.slug %}"><i class="fa fa-plus-square"></i>جزئیات</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+                                {% endfor %}
+                                </div>
+                            {% endfor %}
+
+
+					</div>
+							<a class="left recommended-item-control" href="#new-item-carousel" data-slide="prev">
+								<i class="fa fa-angle-left"></i>
+							  </a>
+							  <a class="right recommended-item-control" href="#new-item-carousel" data-slide="next">
+								<i class="fa fa-angle-right"></i>
+							  </a>
+					</div>
+					</div><!--RetailSale_items-->
+
+					<div class="features_items"><!--WholeSale_items-->
+						<a href=""><h2 class="title text-center">پر فروش ترین محصولات</h2></a>
+						<div id="major-item-carousel" class="carousel slide" data-ride="carousel">
+						<div class="carousel-inner">
+                            {% for group in most_bought_product %}
+                                <div class="item {% if forloop.first %}active{% endif %}">
+                                {% for product in group %}
+                                   <div class="col-sm-3">
+								<div class="product-image-wrapper">
+									<div class="single-products">
+											<div class="productinfo text-center">
+                                                <a href="{% url "detail_list" slug=product.slug %}"><img style="height: 150px;width: 200px" src="{{ product.image.url }}" alt="" /></a>
+												<h2>{{ product.price|price_view }}</h2>
+												<p class="product-title">{{ product.title }}</p>
+												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+											</div>
+											<div class="product-overlay">
+												<div class="overlay-content">
+													<h2>{{ product.price|price_view }}</h2>
+													<p class="product-title">{{ product.title }}</p>
+													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+												</div>
+											</div>
+									</div>
+									<div class="choose">
+										<ul class="nav nav-pills nav-justified">
+											<li>
+												<a onclick="add_to_favorite({{ product.id }},event)" href="#">
+													<i {% if favorite_map|dict_get:product.id %}style="color: orange"{% endif %} id="i-{{ product.id }}" class="fa {% if favorite_map|dict_get:product.id %}fa-check-circle{% else %}fa-plus-square{% endif %}"></i>لیست علاقه مندی ها
+												</a>
+											</li>
+											<li><a href="{% url 'detail_list' product.slug %}"><i class="fa fa-plus-square"></i>جزئیات</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+                                {% endfor %}
+                                </div>
+                            {% endfor %}
+					</div>
+							<a class="left recommended-item-control" href="#major-item-carousel" data-slide="prev">
+								<i class="fa fa-angle-left"></i>
+							  </a>
+							  <a class="right recommended-item-control" href="#major-item-carousel" data-slide="next">
+								<i class="fa fa-angle-right"></i>
+							  </a>
+					</div>
+					</div><!--WholeSale_items-->
+
+{#                <div class="category-tab">#}
+{#                    <div class="col-sm-12">#}
+{#							<ul class="nav nav-tabs">#}
+{#                                {% for products_category in parent_category %}#}
+{#                                        <li class="{% if forloop.first %}active{% endif %}"><a href="#Tab_" data-toggle="tab">{{ products_category.title}}</a></li>#}
+{#                                {% endfor %}#}
+{#							</ul>#}
+{#                    </div>#}
+{#                </div>#}
+
+					<div class="category-tab"><!--category-tab-->
+						<div class="col-sm-12">
+							<ul class="nav nav-tabs">
+                                {% for products_category in products_categories %}
+                                    {% for sub_category in products_category.sub_category %}
+                                        <li class="{% if forloop.first %}active{% endif %}"><a href="#Tab_{{ sub_category.id }}" data-toggle="tab">{{ sub_category.title}}</a></li>
+                                    {% endfor %}
+                                {% endfor %}
+							</ul>
+						</div>
+						<div class="tab-content">
+                            {% for products_category in products_categories %}
+                                    {% for sub_category in products_category.sub_category %}
+                                        <div class="tab-pane fade {% if forloop.first %}active in{% endif %}" id="Tab_{{ sub_category.id }}">
+                                        {% for product in sub_category.sub_product %}
+                                                <div class="col-sm-3">
+                                                    <div class="product-image-wrapper">
+                                                        <div class="single-products">
+                                                            <div class="productinfo text-center">
+                                                                <a href="{% url "detail_list" slug=product.slug %}"><img src="{{ product.image.url }}" alt="" /></a>
+                                                                <h2>{{ product.price|price_view }} تومان </h2>
+                                                                <p class="product-title">{{ product.title }}</p>
+                                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>افزودن به سبـد خریـد</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                        {% endfor %}
+                                        </div>
+                            {% endfor %}
+                                {% endfor %}
+
+
+						</div>
+					</div><!--/category-tab-->
+
+				</div>
+
+			</div>
+		</div>
+	</section>
+    <style>
+    .product-title{
+        white-space: nowrap;
+        width:250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    </style>
+    <script>
+    function add_to_favorite(productid, event) {
+    event.preventDefault();
+    $.get("/user/add-favorite?product_id=" + productid).then(res => {
+        if(res.status==='warning'){
+            var favoriteIcon = document.getElementById(`i-${productid}`)
+            favoriteIcon.classList.remove('fa-check-circle');
+            favoriteIcon.classList.add('fa-plus-square');
+            favoriteIcon.style.color = 'darkgrey';
+        }
+        if (res.status === 'success') {
+            // تغییر کلاس آیکون
+            var favoriteIcon = document.getElementById(`i-${productid}`)
+            favoriteIcon.classList.remove('fa-plus-square');
+            favoriteIcon.classList.add('fa-check-circle');
+            favoriteIcon.style.color = 'orange'; // اختیاری: تغییر رنگ برای نمایش موفقیت
+            }
+        });
+}
+
+    </script>
+
+{% endblock %}
+
+

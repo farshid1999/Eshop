@@ -1,0 +1,47 @@
+<h2>دسته بندی مقالات</h2>
+<div class="panel-group category-products" id="accordian"><!--category-productsr-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title" style="margin-right: 20px">
+                <a href="{% url 'articles_page' %}">همه</a>
+            </h4>
+        <hr>
+            {% for main_categoty in main_categoties %}
+        							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+                                        {% if main_categoty.articlecategory_set.all %}
+                                            <a data-toggle="collapse" data-parent="#accordian" href="#{{ main_categoty.url_title }}">
+											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                            {{ main_categoty.title}}
+										</a>
+                                            {% else %}
+                                            <a href="{% url 'articles_by_category_list' category=main_categoty.url_title %}">
+                                            {{ main_categoty.title}}
+                                            </a>
+                                        {% endif %}
+
+
+									</h4>
+								</div>
+                                    {% if main_categoty.articlecategory_set.all %}
+                                        <div id="{{ main_categoty.url_title }}" class="panel-collapse collapse">
+									<div class="panel-body">
+										<ul>
+                                            <li><a style="color: orange" href="{% url 'articles_by_category_list' category=main_categoty.url_title %}">{{ main_categoty.title}}</a></li>
+                                            {% for sub_category in main_categoty.articlecategory_set.all %}
+                                            <li><a href="{% url 'articles_by_category_list' category=sub_category.url_title %}">{{ sub_category.title }}</a></li>
+                                            {% endfor %}
+										</ul>
+									</div>
+                                        </div>
+                                    {% endif %}
+							</div>
+                {% if not forloop.last %}<hr>{% endif %}
+
+    {% endfor %}
+
+</div><!--/category-productsr-->
+    </div>
+</div>
+
